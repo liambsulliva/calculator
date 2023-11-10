@@ -22,14 +22,18 @@ function drawDisplay () {
         numBtn.textContent = i + '';
         calcBody.append(numBtn);
     }
-    const ops = ['+', '-', '*', '/', '='];
-    for (let i = 0; i < 5; i++) {
+    const ops = ['+', '-', '*', '/'];
+    for (let i = 0; i < 4; i++) {
         const opBtn = document.createElement('button');
         opBtn.className = 'opBtn';
         opBtn.id = ops[i];
         opBtn.textContent = ops[i];
         calcBody.append(opBtn);
     }
+    const equalsBtn = document.createElement('button');
+    equalsBtn.className = 'equalsBtn';
+    equalsBtn.textContent = '=';
+    calcBody.append(equalsBtn);
 }
 
 //* Draws numbers to the screen when an update is requested
@@ -39,6 +43,7 @@ function drawNums () {
     const numBtns = document.querySelectorAll('.numBtn');
     const opBtns = document.querySelectorAll('.opBtn');
     const clearBtn = document.querySelector('.clearBtn');
+    const equalsBtn = document.querySelector('.equalsBtn');
     numBtns.forEach(button => {
         button.addEventListener('click', function() {
             if (numChars < 22) {
@@ -63,6 +68,10 @@ function drawNums () {
     });
     clearBtn.addEventListener('click', function() {
         calcDisplay.textContent = "0";
+    });
+    equalsBtn.addEventListener('click', function() {
+        const expression = calcDisplay.textContent;
+        calcDisplay.textContent = eval(expression);
     });
 }
 
