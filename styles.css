@@ -1,0 +1,27 @@
+body {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}
+
+.calc-display {
+    margin: 0 auto;
+    padding: 5px;
+    text-align: right;
+    height: 100px;
+    width: 1000px;
+    background-color: beige;
+}
+
+.calc-body {
+    flex-direction: row;
+    margin: 28px;
+}
+
+.numBtn {
+    font-size: 32px;
+    margin: 5px;
+    height: 50px;
+    width: 50px;
+}
