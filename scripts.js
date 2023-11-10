@@ -1,13 +1,14 @@
 //* Globals
 const calcBody = document.querySelector('.calc-body');
 const calcDisplay = document.querySelector('.calc-display');
+const ops = ['+', '-', '*', '/'];
 let numChars = 0;
 
-//* Basic Arithmetic
-const add = (a, b) => a + b;
-const sub = (a, b) => a - b;
-const mult = (a, b) => a * b;
-const div = (a, b) => a / b;
+//* Arrow Function Arithmetic
+let add = (a, b) => a + b;
+let sub = (a, b) => a - b;
+let mult = (a, b) => a * b;
+let div = (a, b) => a / b;
 
 //* Draws Button Interface
 function drawDisplay () {
@@ -22,7 +23,6 @@ function drawDisplay () {
         numBtn.textContent = i + '';
         calcBody.append(numBtn);
     }
-    const ops = ['+', '-', '*', '/'];
     for (let i = 0; i < 4; i++) {
         const opBtn = document.createElement('button');
         opBtn.className = 'opBtn';
@@ -37,21 +37,19 @@ function drawDisplay () {
 }
 
 //* Draws numbers to the screen when an update is requested
-//! Missing Implementation
+//! BUG: Operating on resultant numbers returns INVALID OPERATOR
 function drawNums () {
     calcDisplay.textContent = 0;
     const numBtns = document.querySelectorAll('.numBtn');
     const opBtns = document.querySelectorAll('.opBtn');
     const clearBtn = document.querySelector('.clearBtn');
     const equalsBtn = document.querySelector('.equalsBtn');
+    let expression = "";
     numBtns.forEach(button => {
         button.addEventListener('click', function() {
             if (numChars < 22) {
-                if (calcDisplay.textContent === '0') {
-                    calcDisplay.textContent = button.id;
-                } else {
-                    calcDisplay.textContent += button.id;
-                }
+                calcDisplay.textContent = button.id;
+                expression += button.id + " ";
             }
             numChars++;
         });
@@ -59,20 +57,51 @@ function drawNums () {
     opBtns.forEach(button => {
         button.addEventListener('click', function() {
             if (numChars < 22) {
-                if (calcDisplay.textContent !== '0') {
-                    calcDisplay.textContent += button.id;
-                }
+                calcDisplay.textContent = button.id;
+                expression += button.id + " ";
             }
             numChars++;
         });
     });
     clearBtn.addEventListener('click', function() {
         calcDisplay.textContent = "0";
+        expression = "";
     });
     equalsBtn.addEventListener('click', function() {
-        const expression = calcDisplay.textContent;
-        calcDisplay.textContent = eval(expression);
+        calcDisplay.textContent = operate(expression);
+        expression = calcDisplay.textContent;
     });
+}
+
+//* Splits string into operator and operands and parses answer
+function operate(expression) {
+    const [operand1, operator, operand2] = expression.split(/\s+/);
+    const num1 = parseFloat(operand1);
+    const num2 = parseFloat(operand2);
+    let result = 0;
+
+    switch (operator) {
+        case '+':
+            result = add(num1, num2);
+            break;
+        case '-':
+            result = sub(num1, num2);
+            break;
+        case '*':
+            result = mult(num1, num2);
+            break;
+        case '/':
+            if (num2 !== 0) {
+                result = div(num1, num2);
+            } else {
+                result = "Cannot divide by zero";
+            }
+            break;
+        default:
+            result = "Invalid operator";
+            break;
+    }
+    return result;
 }
 
 drawDisplay();
