@@ -5,6 +5,7 @@ let firstOperand = '';
 let secondOperand = '';
 let currentOperation = null;
 const ops = ['+', '-', '×', '÷'];
+let numChars = 0;
 
 //* Arrow Function Arithmetic
 let add = (a, b) => a + b;
@@ -45,7 +46,6 @@ function drawNums () {
     const opBtns = document.querySelectorAll('.opBtn');
     const clearBtn = document.querySelector('.clearBtn');
     const equalsBtn = document.querySelector('.equalsBtn');
-    let numChars = 0;
     calcDisplay.textContent = '0';
     numBtns.forEach(button => {
         button.addEventListener('click', function() {
@@ -56,7 +56,7 @@ function drawNums () {
                         calcDisplay.textContent += button.id;
                     } else {
                         secondOperand += button.id;
-                        if (currentOperation && numChars === 1) {
+                        if (!numChars) {
                             calcDisplay.textContent = button.id;
                         } else {
                             calcDisplay.textContent += button.id;
@@ -72,8 +72,11 @@ function drawNums () {
     });
     opBtns.forEach(button => {
         button.addEventListener('click', function() {
-            calcDisplay.textContent = button.id;
-            currentOperation = button.id;
+            if (firstOperand) {
+                calcDisplay.textContent = button.id;
+                currentOperation = button.id;
+                numChars = 0;
+            }
         });
     });
     clearBtn.addEventListener('click', function() {
@@ -81,12 +84,14 @@ function drawNums () {
         firstOperand = '';
         secondOperand = '';
         currentOperation = null;
+        numChars = 0;
     });
     equalsBtn.addEventListener('click', function() {
         calcDisplay.textContent = operate(firstOperand, secondOperand, currentOperation);
         firstOperand = calcDisplay.textContent;
         secondOperand = '';
         currentOperation = null;
+        numChars = 0;
     });
 }
 
