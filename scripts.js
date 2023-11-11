@@ -87,8 +87,9 @@ function drawNums () {
         numChars = 0;
     });
     equalsBtn.addEventListener('click', function() {
-        calcDisplay.textContent = operate(firstOperand, secondOperand, currentOperation);
-        firstOperand = calcDisplay.textContent;
+        const ans = operate(firstOperand, secondOperand, currentOperation);
+        calcDisplay.textContent = ans;
+        firstOperand = ans;
         secondOperand = '';
         currentOperation = null;
         numChars = 0;
@@ -97,6 +98,8 @@ function drawNums () {
 
 //* Calculates answer from given nums and op
 function operate(num1, num2, operator) {
+    num1 = parseFloat(num1);
+    num2 = parseFloat(num2);
     let result = 0;
     switch (operator) {
         case '+':
