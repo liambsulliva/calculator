@@ -1,8 +1,10 @@
 //* Globals
 const calcBody = document.querySelector('.calc-body');
 const calcDisplay = document.querySelector('.calc-display');
-const ops = ['+', '-', '*', '/'];
-let numChars = 0;
+let firstOperand = '';
+let secondOperand = '';
+let currentOperation = null;
+const ops = ['+', '-', '×', '÷'];
 
 //* Arrow Function Arithmetic
 let add = (a, b) => a + b;
@@ -37,49 +39,60 @@ function drawDisplay () {
 }
 
 //* Draws numbers to the screen when an update is requested
-//! BUG: Operating on resultant numbers returns INVALID OPERATOR
+// TODO: Refactor numBtn event listener
 function drawNums () {
-    calcDisplay.textContent = 0;
     const numBtns = document.querySelectorAll('.numBtn');
     const opBtns = document.querySelectorAll('.opBtn');
     const clearBtn = document.querySelector('.clearBtn');
     const equalsBtn = document.querySelector('.equalsBtn');
-    let expression = "";
+    let numChars = 0;
+    calcDisplay.textContent = '0';
     numBtns.forEach(button => {
         button.addEventListener('click', function() {
             if (numChars < 22) {
-                calcDisplay.textContent = button.id;
-                expression += button.id + " ";
+                if (calcDisplay.textContent !== '0') {
+                    if (!firstOperand) {
+                        firstOperand += button.id;
+                        calcDisplay.textContent += button.id;
+                    } else {
+                        secondOperand += button.id;
+                        if (currentOperation && numChars === 1) {
+                            calcDisplay.textContent = button.id;
+                        } else {
+                            calcDisplay.textContent += button.id;
+                        }
+                    }
+                } else {
+                    calcDisplay.textContent = button.id;
+                    firstOperand = button.id;
+                }
+                numChars++;
             }
-            numChars++;
         });
     });
     opBtns.forEach(button => {
         button.addEventListener('click', function() {
-            if (numChars < 22) {
-                calcDisplay.textContent = button.id;
-                expression += button.id + " ";
-            }
-            numChars++;
+            calcDisplay.textContent = button.id;
+            currentOperation = button.id;
         });
     });
     clearBtn.addEventListener('click', function() {
         calcDisplay.textContent = "0";
-        expression = "";
+        firstOperand = '';
+        secondOperand = '';
+        currentOperation = null;
     });
     equalsBtn.addEventListener('click', function() {
-        calcDisplay.textContent = operate(expression);
-        expression = calcDisplay.textContent;
+        calcDisplay.textContent = operate(firstOperand, secondOperand, currentOperation);
+        firstOperand = calcDisplay.textContent;
+        secondOperand = '';
+        currentOperation = null;
     });
 }
 
-//* Splits string into operator and operands and parses answer
-function operate(expression) {
-    const [operand1, operator, operand2] = expression.split(/\s+/);
-    const num1 = parseFloat(operand1);
-    const num2 = parseFloat(operand2);
+//* Calculates answer from given nums and op
+function operate(num1, num2, operator) {
     let result = 0;
-
     switch (operator) {
         case '+':
             result = add(num1, num2);
@@ -87,10 +100,10 @@ function operate(expression) {
         case '-':
             result = sub(num1, num2);
             break;
-        case '*':
+        case '×':
             result = mult(num1, num2);
             break;
-        case '/':
+        case '÷':
             if (num2 !== 0) {
                 result = div(num1, num2);
             } else {
@@ -98,7 +111,7 @@ function operate(expression) {
             }
             break;
         default:
-            result = "Invalid operator";
+            result = null;
             break;
     }
     return result;
